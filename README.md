@@ -119,7 +119,7 @@ The script generates three CSV files:
    ```
 3. Run the script:
    ```bash
-   python "script w addtional.py"
+   python "script w add.py"
    ```
 
 ## Data Structure
