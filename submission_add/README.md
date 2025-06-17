@@ -1,126 +1,34 @@
-# BlackBird CRM Data Processing Script
+# CRM Update Script
 
-This script processes and manages CRM data by integrating form submissions with existing CRM records, analyzing feedback, and maintaining a sorted contact history provided by BLACKBIRD.
+This script processes form submissions and updates the CRM data based on the latest contact information. It includes feedback analysis and sorting logic to prioritize urgent reviews.
 
 ## Features
+- Fetches CRM data and form submissions from the API.
+- Processes form submissions to update existing contacts or add new ones.
+- Analyzes feedback text to assign action statuses based on keyword count.
+- Sorts the updated CRM data by 'last contact date' (newest first) and 'feedback_action_status' (Urgent Review > Review for Improvement > General Note).
 
-### 1. Data Collection and Processing
-- Fetches CRM data from the API endpoint
-- Retrieves form submissions from the API endpoint
-- Processes and cleans data from both sources
+## Feedback Analysis
+The script analyzes feedback text using a predefined list of keywords. The action status is assigned as follows:
+- **Urgent Review**: If 3 or more keywords are found in the feedback text.
+- **Review for Improvement**: If 1 or 2 keywords are found.
+- **General Note**: If no keywords are found or the feedback is missing.
 
-### 2. Contact Management
-- Merges form submissions with existing CRM data
-- Updates existing contacts based on matching criteria:
-  - Email address
-  - Phone number
-  - Name (first and last)
-- Adds new contacts from form submissions
-- Maintains complete contact history
+## Output
+The updated CRM data is saved to `crm_update.csv`, and the sorted data is displayed in the console.
 
-### 3. Feedback Analysis
-- Analyzes feedback messages for key topics:
-  - Product features
-  - Events and meetups
-  - Content and newsletters
-  - Technical issues
-  - General feedback
-- Categorizes feedback into action statuses:
-  - Urgent Review
-  - Review for Improvement
-  - General Note
+## Usage
+Run the script using Python 3:
+```bash
+python3 submission_add/script_add.py
+```
 
-### Feedback Action Status Categorization Logic
-
-The script categorizes feedback based on the number of keywords found in the message. The same set of keywords is used for all categories, but the count determines the priority level:
-
-Keywords used for analysis:
-- "number", "phone", "contact", "email", "address"
-- "urgent", "asap", "immediately", "right away"
-- "issue", "problem", "error", "bug", "broken"
-- "security", "hack", "breach", "vulnerability"
-- "complaint", "unhappy", "dissatisfied", "angry"
-- "better", "improve", "enhance", "upgrade"
-- "suggestion", "recommend", "advise", "propose"
-- "location", "venue", "place", "room"
-- "food", "coffee", "breakfast", "lunch", "dinner"
-- "time", "schedule", "timing", "duration"
-
-Categorization based on keyword count:
-1. **Urgent Review** (Highest Priority)
-   - Assigned when 3 or more keywords are found in the message
-   - Example: "Can you please provide me Maria's number so I can send her some information from a conversation we had?" (contains "number", "information", "conversation")
-
-2. **Review for Improvement** (Medium Priority)
-   - Assigned when 1-2 keywords are found in the message
-   - Examples:
-     - "Location could have been better" (contains "location", "better")
-     - "More coffee next time" (contains "coffee")
-     - "Breakfast was a little cold but otherwise good" (contains "breakfast")
-
-3. **General Note** (Default Priority)
-   - Assigned when no keywords are found in the message
-   - Examples:
-     - "The content was excellent as always"
-     - "The offsite was fantastic"
-     - "I had some great conversations"
-
-The categorization process:
-1. Counts the number of keywords present in the feedback message
-2. Assigns category based on the count:
-   - 3+ keywords → Urgent Review
-   - 1-2 keywords → Review for Improvement
-   - 0 keywords → General Note
-
-This count-based approach ensures that messages with multiple relevant keywords are prioritized for urgent review, while simpler feedback is categorized appropriately.
-
-### 4. Data Cleaning and Formatting
-- Formats phone numbers (removes '.0' suffix)
-- Standardizes date formats
-- Handles missing values appropriately
-- Cleans and formats text fields
-
-### 5. Sorting and Organization
-- Sorts data by multiple criteria:
-  1. Last contact date (newest first)
-  2. Feedback action status (priority order):
-     - Urgent Review
-     - Review for Improvement
-     - General Note
-- Maintains chronological order within each status category
-
-## Output Files
-
-The script generates three CSV files:
-
-1. `raw_crm.csv`
-   - Contains the original CRM data
-   - Preserves all original fields and formatting
-
-2. `raw_form.csv`
-   - Contains the original form submission data
-   - Includes all form fields as received
-
-3. `crm_update.csv`
-   - Contains the merged and processed data
-   - Includes all CRM fields plus:
-     - Updated contact information
-     - Complete contact history
-     - Feedback analysis results
-     - Action status
-   - Sorted by date and feedback status
-
-## How to Run
-
-1. Ensure you have Python 3.x installed
-2. Install required packages:
-   ```bash
-   pip install requests pandas numpy
-   ```
-3. Run the script:
-   ```bash
-   python "script_add.py"
-   ```
+## Dependencies
+- Python 3.x
+- pandas
+- requests
+- numpy
+- re
 
 ## Data Structure
 
